@@ -2,20 +2,61 @@
 <html>
 <head>
     <title>Image Enhancement</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery, Popper JS, and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h2>Image Enhancement</h2>
-    <form enctype="multipart/form-data" method="post" action="/upload" id="uploadForm">
-        <input type="file" name="imageFile" id="imageFile" accept="image/*" required>
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-12 col-md-8 col-lg-6">
+                <form enctype="multipart/form-data" method="post" action="/upload" id="uploadForm" class="text-center border border-light p-5">
+                    <p class="h4 mb-4">Image Enhancement</p>
+                    <input type="file" name="imageFile" id="imageFile" class="form-control mb-4" accept="image/*" required>
+                    <button class="btn btn-info btn-block" type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
 
-    <div id="output"></div>
+        <!-- Image columns -->
+        <div class="row justify-content-center mb-4">
+            <!-- Raw Image Column -->
+            <div class="col-md-4 text-center">
+                <h5>Raw Image</h5>
+                <div class="preview-card">
+                    <img id="rawImage" class="img-fluid" src="#" alt="Raw Image" style="display: none;">
+                </div>
+            </div>
+            <!-- Enhanced Image Column -->
+            <div class="col-md-4 text-center">
+                <h5>Enhanced Image</h5>
+                <div class="preview-card">
+                    <img id="enhancedImage" class="img-fluid" src="#" alt="Enhanced Image" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="output" class="text-center"></div>
 
     <script>
+        // Event listener for the file input change
+        document.getElementById('imageFile').addEventListener('change', function(event){
+            var reader = new FileReader();
+            reader.onload = function(){
+                var rawImg = document.getElementById('rawImage');
+                rawImg.src = reader.result;
+                rawImg.style.display = 'block'; // Show the raw image preview
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        // Event listener for the form submit action
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
             var formData = new FormData(this);
 
             fetch('/upload', {
@@ -24,13 +65,17 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('output').innerHTML = '<img src="' + data.enhanced_image_path + '" alt="Enhanced Image">' +
-                                                               '<a href="/download/' + encodeURIComponent(data.enhanced_image_path) + '">Download Enhanced Image</a>';
+                var enhancedImg = document.getElementById('enhancedImage');
+                enhancedImg.src = data.enhanced_image_path;
+                enhancedImg.style.display = 'block'; // Show the enhanced image preview
+
+                document.getElementById('output').innerHTML = '<a href="/download/' + encodeURIComponent(data.enhanced_image_path) + '" class="btn btn-success">Download Enhanced Image</a>';
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         });
     </script>
+
 </body>
 </html>
