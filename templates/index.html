@@ -31,12 +31,12 @@
                 </div>
             </div>
             <!-- Enhanced Image Column -->
-            <div class="col-md-4 text-center">
+            <!--<div class="col-md-4 text-center">
                 <h5>Enhanced Image</h5>
                 <div class="preview-card">
-                    <img id="enhancedImage" class="img-fluid" src="#" alt="Enhanced Image" style="display: none;">
+                    <img id="enhancedImage" class="img-fluid" src=data.enhanced_image_path alt="Enhanced Image" style="display: none;">
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 
@@ -65,9 +65,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                var enhancedImg = document.getElementById('enhancedImage');
+                /*var enhancedImg = document.getElementById('enhancedImage');
                 enhancedImg.src = data.enhanced_image_path;
-                enhancedImg.style.display = 'block'; // Show the enhanced image preview
+                enhancedImg.style.display = 'block'; // Show the enhanced image preview*/
 
                 document.getElementById('output').innerHTML = '<a href="/download/' + encodeURIComponent(data.enhanced_image_path) + '" class="btn btn-success">Download Enhanced Image</a>';
             })
