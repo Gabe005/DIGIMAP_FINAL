@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Enhancement</title>
+</head>
+<body>
+    <h2>Image Enhancement</h2>
+    <form enctype="multipart/form-data" method="post" action="/upload" id="uploadForm">
+        <input type="file" name="imageFile" id="imageFile" accept="image/*" required>
+        <input type="submit" value="Upload">
+    </form>
+
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            var formData = new FormData(this);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerHTML = '<img src="' + data.enhanced_image_path + '" alt="Enhanced Image">' +
+                                                               '<a href="/download/' + encodeURIComponent(data.enhanced_image_path) + '">Download Enhanced Image</a>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
