@@ -4,7 +4,7 @@ import os
 import cv2 as cv
 from cv2 import dnn_superres
 
-#github dl for models
+#github download for models
 #https://github.com/Saafke/EDSR_Tensorflow/blob/master/models/EDSR_x4.pb
 
 #source code for super resolution
@@ -28,11 +28,15 @@ def enhance_image(image_path):
 
     # set the model and scale
     sr.setModel('edsr', 4)
+
     # Read the image
     image = cv.imread(image_path)
 
     # upsample the image
     upscaled = sr.upsample(image)
+
+    """image = cv.imread(image_path)
+    bicubic = cv.resize(image, (upscaled.shape[1], upscaled.shape[0]), interpolation=cv.INTER_CUBIC)"""
 
     return upscaled
 
