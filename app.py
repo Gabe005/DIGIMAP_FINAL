@@ -4,19 +4,8 @@ import os
 import cv2 as cv
 from cv2 import dnn_superres
 
-#github download for models
-#https://github.com/Saafke/EDSR_Tensorflow/blob/master/models/EDSR_x4.pb
-
-#source code for super resolution
-#https://www.hackersrealm.net/post/enhance-your-images-with-super-resolution-opencv
-
-#required: pip install opencv-contrib-python
-
 app = Flask(__name__)
 CORS(app)
-
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def enhance_image(image_path):
     # initialize super resolution object
@@ -54,19 +43,17 @@ def upload_file():
         return jsonify({'error': 'No selected file'})
 
     if file:
-        img_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        img_path = os.path.join(app.instance_path, file.filename)
         file.save(img_path)
 
         enhanced_img = enhance_image(img_path)
 
         # Save enhanced image to a temporary file
-        enhanced_img_path = os.path.join(app.config['UPLOAD_FOLDER'], 'enhanced_' + file.filename)
+        enhanced_img_path = os.path.join(app.instance_path, 'enhanced_' + file.filename)
         cv.imwrite(enhanced_img_path, enhanced_img)
 
         return jsonify({'enhanced_image_path': enhanced_img_path})
 
 @app.route('/download/<path:filename>', methods=['GET'])
 def download_file(filename):
-    return send_file(filename, as_attachment=True)
-
-
+    return send_file(os.path.join(app.instance_path, filename), as_attachment=True)
